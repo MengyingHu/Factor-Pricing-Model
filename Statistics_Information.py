@@ -23,6 +23,7 @@ class Statistics():
     @classmethod
     def create(cls, path_datafile, sheet_var, sheet_mr, sheet_rf, sheet_mv, sheet_bm, sheet_stocks,**kwargs):
         # import data
+        # data is time by ISIN
         var_data = pd.read_excel(path_datafile, sheet_name=sheet_var, index_col=0)
         market_return_data = pd.read_excel(path_datafile, sheet_name=sheet_mr, index_col=0)
         risk_free_data = pd.read_excel(path_datafile, sheet_name=sheet_rf, index_col=0)
@@ -33,9 +34,12 @@ class Statistics():
                    book_to_market=book_to_market_data, stocks_total_return=stocks_total_return_index_data)
 
     def data_cleaning(self, sort_column):
-        self.stocks_total_return[sort_column] = self.var[sort_column]
+        df = self.stock_total_return.T
+        df[sort_column] = self.var[sort_column]
+        df.dropna(axis=1, how='any', inplace=True)
         self.stocks_total_return = self.stocks_total_return.sort_values(sort_column)
-        self.stocks_total_return(axis=1, how='any', inplace=True)
+        self.market_value = self.market_value.T.loc[df.index]
+        self.
 
 
 
