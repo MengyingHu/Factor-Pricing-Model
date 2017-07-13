@@ -37,9 +37,11 @@ class Statistics():
         df = self.stock_total_return.T
         df[sort_column] = self.var[sort_column]
         df.dropna(axis=1, how='any', inplace=True)
-        self.stocks_total_return = self.stocks_total_return.sort_values(sort_column)
+        df = df.sort_values(sort_column)
         self.market_value = self.market_value.T.loc[df.index]
-        self.
+        self.book_to_market = self.book_to_market.T.loc[df.index]
+
+    def factor_calculation(self):
 
 
 
