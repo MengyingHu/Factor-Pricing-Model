@@ -8,7 +8,7 @@ class Statistics():
     compute some statistics information for factors
     """
 
-    def __init__(self, var_data, market_return_data, risk_free_data, df, **kwargs):
+    def __init__(self, var_data, market_return_data, risk_free_data, df, sort_column,**kwargs):
         """
         Args:
 
@@ -17,6 +17,7 @@ class Statistics():
         self.market_return = market_return_data
         self.rf = risk_free_data
         self.df = df
+        self.sort_column = sort_column
 
     @classmethod
     def create(cls, path_datafile, sheet_var, sheet_mr, sheet_rf, sheet_mv, sheet_bm, sheet_stocks, sort_column, **kwargs):
@@ -39,10 +40,50 @@ class Statistics():
         df = df.T.loc[sort_column.index]
         df.dropna(axis=1, how='any', inplace=True)
         # df is dataframe, ISIN by time
-        return cls(var=var_data, market_return=market_return_data, rf=risk_free_data, df=df.T)
+        return cls(var=var_data, market_return=market_return_data, rf=risk_free_data, df=df, sort_column=sort_column)
+
+    def Mkt(self):
+        '''
+        :return: Mkt is dataframe, time by excess return
+        '''
+        Mkt = pd.DataFrame([self.market_return - self.rf], index=self.rf.index)
+        return Mkt
+
 
     def SMB(self):
-        SMB = pd.DataFrame([])
+        '''
+        :return: SMB is dataframe, ISIN by time
+        '''
+        n = np.ceil(self.df.index.shape / 2)
+        # ToDo: check the expression of self.df[col].sort['market value'][:n].index['total return']
+        SMB = pd.DataFrame([self.df[col].sort['market value'][:n].index['total return'].mean
+                            - self.df[col].sort['MV'][n:].index['total return'].mean
+                           for col in self.df.columns], columns=self.df.columns)
+        return SMB
+
+    def HML(self):
+        '''
+        :return: HML is dataframe, ISIN by time
+        '''
+        n = np.ceil(0.3 * self.df.index.shape)
+        m = np.ceil(0.7 * self.df.index.shape)
+        # ToDo: check self.df[col].sort['book to market'][:n].index['total return'].mean
+        HML = pd.DataFrame([self.df[col].sort['book to market'][:n].index['total return'].mean
+                            - self.df[col].sort['book to market'][m:].index['total return'].mean
+                           for col in self.df.columns], columns=self.df.columns)
+        return HML
+
+    def var(self):
+        n = np.ceil(0.2 * self.df.index.shape)
+        m = np.ceil(0.8 * self.df.index.shape)
+        self.df[self.sort_column] = self.var[self.sort_column]
+        self.df.sort(['sort_column'], inplace=True)
+        # ToDo: check self.df[:n].index['total return']
+        var = pd.DataFrame([self.df[:n].index['total return'] - self.df[m:].index['total return']], columns=df.columns)
+        return var
+
+    def
+
 
 
 
