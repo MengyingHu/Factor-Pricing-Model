@@ -33,7 +33,6 @@ class Statistics():
         book_to_market_data = pd.read_excel(path_datafile, sheet_name=sheet_bm, index_col=0)
         stocks_total_return_index_data = pd.read_excel(path_datafile, sheet_name=sheet_stocks, index_col=0)
         total_return = stocks_total_return_index_data[1:] / stocks_total_return_index_data[:-1].values - 1
-        import ipdb; ipdb.set_trace()
         frame = [total_return, market_value_data, book_to_market_data]
         df = pd.concat(frame, keys=['total return', 'market value', 'book to market'])
 
@@ -44,17 +43,20 @@ class Statistics():
 
     def Mkt(self):
         '''
-        :return: Mkt is dataframe, time by excess return
+        :return: Mkt is dataframe, excess return by time
         '''
         Mkt = pd.DataFrame([self.market_return - self.rf], index=self.rf.index)
-        return Mkt
+        return Mkt.T
 
 
     def SMB(self):
         '''
-        :return: SMB is dataframe, ISIN by time
+        :return: SMB is dataframe, smb by time
         '''
         n = np.ceil(self.df.index.shape / 2)
+
+        import ipbd; ipbd.set_trace()
+
         # ToDo: check the expression of self.df[col].sort['market value'][:n].index['total return']
         SMB = pd.DataFrame([self.df[col].sort['market value'][:n].index['total return'].mean
                             - self.df[col].sort['MV'][n:].index['total return'].mean
@@ -63,7 +65,7 @@ class Statistics():
 
     def HML(self):
         '''
-        :return: HML is dataframe, ISIN by time
+        :return: HML is dataframe, hml by time
         '''
         n = np.ceil(0.3 * self.df.index.shape)
         m = np.ceil(0.7 * self.df.index.shape)
@@ -74,15 +76,29 @@ class Statistics():
         return HML
 
     def var(self):
+        '''
+        :return: var is dataframe, var return by time
+        '''
         n = np.ceil(0.2 * self.df.index.shape)
         m = np.ceil(0.8 * self.df.index.shape)
         self.df[self.sort_column] = self.var[self.sort_column]
         self.df.sort(['sort_column'], inplace=True)
         # ToDo: check self.df[:n].index['total return']
-        var = pd.DataFrame([self.df[:n].index['total return'] - self.df[m:].index['total return']], columns=df.columns)
+        var = pd.DataFrame([self.df[:n].index['total return'] - self.df[m:].index['total return']], columns=self.df.columns)
         return var
 
+    def information(self, factor):
+        '''
+        :param factor: one of Mkt, SMB, HML var
+        '''
+        mean = factor.mean(axis=1)
+        std = factor.std(axis=1)
+        information = pd.DataFrame({'mean':mean, 'std':std}, index=str(factor))
+        return information
+
     def
+
+
 
 
 
