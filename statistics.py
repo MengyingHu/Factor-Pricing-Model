@@ -24,19 +24,20 @@ class Statistics():
         # import data
         # data is time by ISIN
         # ToDo: delete transform
-        var_data = pd.read_excel(path_datafile, sheet_name=sheet_var, index_col=0)
+        var_data = pd.read_excel(path_datafile, sheetname=sheet_var, index_col=0)
         # dataframe, time by index
-        market_return_data = pd.read_excel(path_datafile, sheet_name=sheet_mr, index_col=0)
+        market_return_data = pd.read_excel(path_datafile, sheetname=sheet_mr, index_col=0)
         # dataframe, time by type
-        risk_free_data = pd.read_excel(path_datafile, sheet_name=sheet_rf, index_col=0)
-        market_value_data = pd.read_excel(path_datafile, sheet_name=sheet_mv, index_col=0)
-        book_to_market_data = pd.read_excel(path_datafile, sheet_name=sheet_bm, index_col=0)
-        stocks_total_return_index_data = pd.read_excel(path_datafile, sheet_name=sheet_stocks, index_col=0)
+        risk_free_data = pd.read_excel(path_datafile, sheetname=sheet_rf, index_col=0)
+        market_value_data = pd.read_excel(path_datafile, sheetname=sheet_mv, index_col=0).T
+        book_to_market_data = pd.read_excel(path_datafile, sheetname=sheet_bm, index_col=0).T
+        stocks_total_return_index_data = pd.read_excel(path_datafile, sheetname=sheet_stocks, index_col=0)
+        book_to_market = pd.DataFrame[{((book_to_market_data[:-1] + book_to_market_data[1:]) / 2)[:-1]}, index=
         total_return = stocks_total_return_index_data[1:] / stocks_total_return_index_data[:-1].values - 1
-        frame = [total_return, market_value_data, book_to_market_data]
+        frame = [total_return, market_value_data.T, book_to_market_data.T]
         df = pd.concat(frame, keys=['total return', 'market value', 'book to market'])
-
-        df = df.T.loc[sort_column.index]
+        import ipdb;ipdb.set_trace()
+        df = df.T.loc[var_data[sort_column].index]
         df.dropna(axis=1, how='any', inplace=True)
         # df is dataframe, ISIN by time
         return cls(var=var_data, market_return=market_return_data, rf=risk_free_data, df=df, sort_column=sort_column)
@@ -48,9 +49,9 @@ class Statistics():
         Mkt = pd.DataFrame([self.market_return - self.rf], index=self.rf.index)
         return Mkt.T
 
-   ''' def beta(self, period='5A'):
-        beta = pd.
-        return beta'''
+    #def beta(self, period='5A'):
+    #   beta = pd.
+    #   return beta
 
 
     def SMB(self):
@@ -100,7 +101,6 @@ class Statistics():
         information = pd.DataFrame({'mean':mean, 'std':std}, index=str(factor))
         return information
 
-    def
 
 
 
