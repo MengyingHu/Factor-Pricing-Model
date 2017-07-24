@@ -48,6 +48,10 @@ class Statistics():
         Mkt = pd.DataFrame([self.market_return - self.rf], index=self.rf.index)
         return Mkt.T
 
+   ''' def beta(self, period='5A'):
+        beta = pd.
+        return beta'''
+
 
     def SMB(self):
         '''
