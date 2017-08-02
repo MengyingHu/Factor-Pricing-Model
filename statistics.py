@@ -40,11 +40,12 @@ class Statistics():
         market_value_data = pd.read_csv(os.path.join(path_data, sheet_mv + ".csv"), delimiter=';', index_col=0)
         book_to_market_data = pd.read_csv(os.path.join(path_data, sheet_bm + ".csv"), delimiter=';', index_col=0)
         stocks_total_return_index_data = pd.read_csv(os.path.join(path_data, sheet_stocks + ".csv"), delimiter=';', index_col=0)
-
+        import ipdb；ipdb.set_trace()
         # compute periodical monthly data
         #market_value = (market_value_data[:-1] + market_value_data[1:].values) / 2
         market_value = market_value_data[:-1]
-        book_to_market = (book_to_market_data[:-1] + book_to_market_data[1:].values) / 2
+        #book_to_market = (book_to_market_data[:-1] + book_to_market_data[1:].values) / 2
+        book_to_market = book_to_market_data[:-1]
         market_return = market_return_data[1:] / market_return_data[:-1].values - 1
         market_return.index = market_value.index
         total_return = stocks_total_return_index_data[1:] / stocks_total_return_index_data[:-1].values - 1
@@ -218,7 +219,7 @@ class Statistics():
         t_stat = pd.DataFrame([sm.OLS(self.firm_excess_return[col].values, X).fit().tvalues for col in self.total_return.columns], index=self.total_return.columns)
         return params.mean(axis=0), t_stat.mean(axis=0)
 
-    def Fama_MacBeth(self):
+    #def Fama_MacBeth(self):
 
 
 
